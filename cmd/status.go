@@ -15,35 +15,35 @@ import (
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Show status of all services or a selected service" ,
+	Long: `The status command shows the status of all services (by default) or a specific service (if given).
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Examples:
+  dummy status
+  dummy status payment-service
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		configsDir := "configs"
 		if len(args) >= 1 {
 			service := args[0]
 			configPath := configsDir + "/" + service + ".yaml"
 			if _, err := os.Stat(configPath); os.IsNotExist(err) {
-				fmt.Printf("Конфиг %s не найден.\n", configPath)
+				fmt.Printf("Config %s not found.\n", configPath)
 				return
 			}
-			fmt.Printf("Сервис %s: Запущен (эмуляция)\n", service)
+			fmt.Printf("Service %s: Running (simulation)\n", service)
 			return
 		}
 		files, err := os.ReadDir(configsDir)
 		if err != nil {
-			fmt.Printf("Ошибка чтения папки %s: %v\n", configsDir, err)
+			fmt.Printf("Error reading directory %s: %v\n", configsDir, err)
 			return
 		}
-		fmt.Println("Статус всех сервисов:")
+		fmt.Println("Status of all services:")
 		for _, file := range files {
 			if !file.IsDir() && strings.HasSuffix(file.Name(), ".yaml") {
 				name := strings.TrimSuffix(file.Name(), ".yaml")
-				fmt.Printf("- %s: Запущен (эмуляция)\n", name)
+				fmt.Printf("- %s: Running (simulation)\n", name)
 			}
 		}
 	},

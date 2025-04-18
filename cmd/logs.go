@@ -14,31 +14,30 @@ import (
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
 	Use:   "logs",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Show logs for the selected service" ,
+	Long: `The logs command shows logs for the selected service (by config from configs).
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example usage:
+  dummy logs payment-service
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Проверяем, что передан сервис
 		if len(args) < 1 {
-			fmt.Println("Ошибка: укажите имя сервиса. Пример: dummy logs payment-service")
+			fmt.Println("Error: please specify a service name. Example: dummy logs payment-service")
 			return
 		}
 		service := args[0]
 		configPath := "configs/" + service + ".yaml"
 		// Проверяем, что конфиг существует
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			fmt.Printf("Конфиг %s не найден.\n", configPath)
+			fmt.Printf("Config %s not found.\n", configPath)
 			return
 		}
 		// Эмулируем вывод логов
-		fmt.Printf("Логи сервиса '%s':\n", service)
+		fmt.Printf("Logs for service '%s':\n", service)
 		fmt.Println("[INFO] Service started successfully.")
 		fmt.Println("[INFO] Handling request on /api/v1/ping")
-		fmt.Println("[ERROR] Database connection timeout (имитация)")
+		fmt.Println("[ERROR] Database connection timeout (simulation)")
 	},
 }
 

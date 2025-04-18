@@ -15,22 +15,21 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Show the list of all available services (configs)",
+	Long: `The list command shows all services that have configs in the configs folder.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example usage:
+  dummy list
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Получаем список файлов из папки configs
 		configsDir := "configs"
 		files, err := os.ReadDir(configsDir)
 		if err != nil {
-			fmt.Printf("Ошибка чтения папки %s: %v\n", configsDir, err)
+			fmt.Printf("Error reading directory %s: %v\n", configsDir, err)
 			return
 		}
-		fmt.Println("Доступные конфигурации:")
+		fmt.Println("Available configurations:")
 		for _, file := range files {
 			if !file.IsDir() && strings.HasSuffix(file.Name(), ".yaml") {
 				name := strings.TrimSuffix(file.Name(), ".yaml")

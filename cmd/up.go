@@ -14,27 +14,26 @@ import (
 // upCmd represents the up command
 var upCmd = &cobra.Command{
 	Use:   "up",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Start environment for the selected service (by config)",
+	Long: `The up command starts the environment for the selected service using a yaml config from the configs folder.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example usage:
+  dummy up payment-service
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Println("Ошибка: укажите имя сервиса. Пример: dummy up payment-service")
+			fmt.Println("Error: please specify a service name. Example: dummy up payment-service")
 			return
 		}
 		service := args[0]
 		configPath := "configs/" + service + ".yaml"
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			fmt.Printf("Конфиг %s не найден.\n", configPath)
+			fmt.Printf("Config %s not found.\n", configPath)
 			return
 		}
-		fmt.Printf("Запуск окружения для сервиса '%s' (конфиг: %s)...\n", service, configPath)
-		// Здесь будет запуск docker compose
-		fmt.Println("(Эмуляция запуска: docker compose up -d)")
+		fmt.Printf("Starting environment for service '%s' (config: %s)...\n", service, configPath)
+		// Here will be the real docker compose up
+		fmt.Println("(Simulation: docker compose up -d)")
 	},
 }
 

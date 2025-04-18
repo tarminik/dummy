@@ -14,27 +14,26 @@ import (
 // downCmd represents the down command
 var downCmd = &cobra.Command{
 	Use:   "down",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Stop environment for the selected service" ,
+	Long: `The down command stops the environment for the selected service (using a config from configs).
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example usage:
+  dummy down payment-service
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Println("Ошибка: укажите имя сервиса. Пример: dummy down payment-service")
+			fmt.Println("Error: please specify a service name. Example: dummy down payment-service")
 			return
 		}
 		service := args[0]
 		configPath := "configs/" + service + ".yaml"
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			fmt.Printf("Конфиг %s не найден.\n", configPath)
+			fmt.Printf("Config %s not found.\n", configPath)
 			return
 		}
-		fmt.Printf("Остановка окружения для сервиса '%s' (конфиг: %s)...\n", service, configPath)
-		// Здесь будет остановка docker compose
-		fmt.Println("(Эмуляция остановки: docker compose down)")
+		fmt.Printf("Stopping environment for service '%s' (config: %s)...\n", service, configPath)
+		// Here will be the real docker compose down
+		fmt.Println("(Simulation: docker compose down)")
 	},
 }
 
