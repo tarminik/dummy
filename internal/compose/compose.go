@@ -76,10 +76,34 @@ func Logs(service string) {
 	fmt.Println("[ERROR] Database connection timeout (simulation)")
 }
 
+// LogsReal выводит логи сервиса через docker compose logs <service>.
+func LogsReal(configPath, service string) error {
+	cmd := exec.Command("docker", "compose", "-f", configPath, "logs", service)
+	cmd.Stdout = nil // Вывод можно перенаправить при необходимости
+	cmd.Stderr = nil
+	fmt.Printf("[DOCKER] Логи сервиса: docker compose -f %s logs %s\n", configPath, service)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("docker compose logs failed: %w", err)
+	}
+	return nil
+}
+
 // Status simulates showing the status of a service.
 // It prints a running status message.
 func Status(service string) {
 	fmt.Printf("Service %s: Running (simulation)\n", service)
+}
+
+// StatusReal выводит статус окружения через docker compose ps.
+func StatusReal(configPath string) error {
+	cmd := exec.Command("docker", "compose", "-f", configPath, "ps")
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+	fmt.Printf("[DOCKER] Статус окружения: docker compose -f %s ps\n", configPath)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("docker compose ps failed: %w", err)
+	}
+	return nil
 }
 
 // RunTests simulates running tests in a service environment.
@@ -89,3 +113,17 @@ func RunTests(service, command string) {
 	fmt.Println("(Simulation: running command in environment)")
 	fmt.Println("Tests finished: PASSED (simulation)")
 }
+
+// RunTestsReal выполняет команду внутри контейнера сервиса через docker compose exec.
+// Пример: RunTestsReal("./docker-compose.yaml", "web", "ls /usr/share/nginx/html")
+func RunTestsReal(configPath, service, testCmd string) error {
+	cmd := exec.Command("docker", "compose", "-f", configPath, "exec", service, "sh", "-c", testCmd)
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+	fmt.Printf("[DOCKER] Выполнение команды: docker compose -f %s exec %s sh -c '%s'\n", configPath, service, testCmd)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("docker compose exec failed: %w", err)
+	}
+	return nil
+}
+
