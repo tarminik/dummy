@@ -19,6 +19,7 @@ var listCmd = &cobra.Command{
 Example usage:
   dummy list
 `,
+	// Command handler for 'list'. Uses config package to show available configs.
 	Run: func(cmd *cobra.Command, args []string) {
 		configsDir := "configs"
 		// Use the config package to get the list of configs

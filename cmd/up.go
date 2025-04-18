@@ -20,6 +20,7 @@ var upCmd = &cobra.Command{
 Example usage:
   dummy up payment-service
 `,
+	// Command handler for 'up'. Checks args, config existence, and simulates start.
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Error: please specify a service name. Example: dummy up payment-service")

@@ -20,6 +20,7 @@ var downCmd = &cobra.Command{
 Example usage:
   dummy down payment-service
 `,
+	// Command handler for 'down'. Checks args, config existence, and simulates stop.
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Error: please specify a service name. Example: dummy down payment-service")

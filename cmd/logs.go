@@ -20,6 +20,7 @@ var logsCmd = &cobra.Command{
 Example usage:
   dummy logs payment-service
 `,
+	// Command handler for 'logs'. Checks args, config existence, and simulates logs.
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Error: please specify a service name. Example: dummy logs payment-service")

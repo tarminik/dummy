@@ -1,3 +1,5 @@
+// Package config provides helpers for working with service configuration files.
+// It helps list available configs and check if a config exists.
 package config
 
 import (
@@ -5,7 +7,8 @@ import (
 	"strings"
 )
 
-// ListConfigs returns the list of service names (without .yaml) from the configs directory.
+// ListConfigs returns the list of service names (without .yaml extension) from the configs directory.
+// It reads the given directory and collects all YAML config names.
 func ListConfigs(configsDir string) ([]string, error) {
 	files, err := os.ReadDir(configsDir)
 	if err != nil {
@@ -22,6 +25,7 @@ func ListConfigs(configsDir string) ([]string, error) {
 }
 
 // ConfigExists checks if a config file exists for a given service name.
+// Returns true if the file configsDir/service.yaml exists, false otherwise.
 func ConfigExists(configsDir, service string) bool {
 	configPath := configsDir + "/" + service + ".yaml"
 	_, err := os.Stat(configPath)

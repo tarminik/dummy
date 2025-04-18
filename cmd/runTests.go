@@ -20,6 +20,7 @@ var runTestsCmd = &cobra.Command{
 Example usage:
   dummy run-tests --service=payment-service --command="pytest tests/"
 `,
+	// Command handler for 'run-tests'. Checks flags, config, and simulates tests.
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get flag values
 		service, _ := cmd.Flags().GetString("service")

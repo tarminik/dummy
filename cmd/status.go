@@ -21,6 +21,7 @@ Examples:
   dummy status
   dummy status payment-service
 `,
+	// Command handler for 'status'. Shows status for all or a single service.
 	Run: func(cmd *cobra.Command, args []string) {
 		configsDir := "configs"
 		if len(args) >= 1 {
