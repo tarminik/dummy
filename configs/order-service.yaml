@@ -1,0 +1,10 @@
+version: 1.0
+services:
+  postgres:
+    image: postgres:14.5
+    env:
+      POSTGRES_PASSWORD: password
+  order-service:
+    image: registry.company.com/order-service:latest
+    ports:
+      - "8081:8080"

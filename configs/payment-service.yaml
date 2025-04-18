@@ -1,0 +1,10 @@
+version: 1.0
+services:
+  postgres:
+    image: postgres:14.5
+    env:
+      POSTGRES_PASSWORD: password
+  payment-service:
+    image: registry.company.com/payment-service:latest
+    ports:
+      - "8080:8080"
