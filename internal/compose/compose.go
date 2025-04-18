@@ -2,7 +2,11 @@
 // All functions here only print messages (no real Docker calls).
 package compose
 
-import "fmt"
+import (
+	"fmt"
+	"os/exec"
+)
+
 
 // Up simulates starting a service environment.
 // It prints a message as if docker compose up was called.
@@ -11,12 +15,57 @@ func Up(service string, configPath string) {
 	fmt.Println("(Simulation: docker compose up -d)")
 }
 
+// UpReal запускает сервис через реальный docker compose up -d.
+// configPath — путь к docker-compose.yaml для сервиса.
+// Возвращает ошибку, если запуск не удался.
+func UpReal(configPath string) error {
+	// Формируем команду: docker compose -f <configPath> up -d
+	cmd := exec.Command("docker", "compose", "-f", configPath, "up", "-d")
+	cmd.Stdout = nil // Вывод можно перенаправить при необходимости
+	cmd.Stderr = nil
+	fmt.Printf("[DOCKER] Запуск окружения: docker compose -f %s up -d\n", configPath)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("docker compose up failed: %w", err)
+	}
+	return nil
+}
+
+
 // Down simulates stopping a service environment.
 // It prints a message as if docker compose down was called.
 func Down(service string, configPath string) {
 	fmt.Printf("Stopping environment for service '%s' (config: %s)...\n", service, configPath)
 	fmt.Println("(Simulation: docker compose down)")
 }
+
+// DownReal останавливает окружение через реальный docker compose down.
+// configPath — путь к docker-compose.yaml для сервиса.
+// Возвращает ошибку, если остановка не удалась.
+func DownReal(configPath string) error {
+	cmd := exec.Command("docker", "compose", "-f", configPath, "down")
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+	fmt.Printf("[DOCKER] Остановка окружения: docker compose -f %s down\n", configPath)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("docker compose down failed: %w", err)
+	}
+	return nil
+}
+
+// ---
+// Пример использования реальных функций:
+//
+// err := UpReal("./docker-compose.yaml")
+// if err != nil {
+//     fmt.Println("Ошибка запуска:", err)
+// }
+// ...
+// err = DownReal("./docker-compose.yaml")
+// if err != nil {
+//     fmt.Println("Ошибка остановки:", err)
+// }
+// ---
+
 
 // Logs simulates showing logs for a service.
 // It prints example log lines.
