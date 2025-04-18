@@ -7,8 +7,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"dummy/internal/config"
-	"dummy/internal/compose"
+	"github.com/tarminik/dummy/internal/config"
+	"github.com/tarminik/dummy/internal/compose"
 )
 
 // logsCmd represents the logs command

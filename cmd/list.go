@@ -7,7 +7,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"dummy/internal/config"
+	"github.com/tarminik/dummy/internal/config"
 )
 
 // listCmd represents the list command
