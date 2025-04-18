@@ -6,9 +6,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
+	"dummy/internal/config"
+	"dummy/internal/compose"
 )
 
 // upCmd represents the up command
@@ -26,14 +26,13 @@ Example usage:
 			return
 		}
 		service := args[0]
-		configPath := "configs/" + service + ".yaml"
-		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			fmt.Printf("Config %s not found.\n", configPath)
+		configsDir := "configs"
+		if !config.ConfigExists(configsDir, service) {
+			fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 			return
 		}
-		fmt.Printf("Starting environment for service '%s' (config: %s)...\n", service, configPath)
-		// Here will be the real docker compose up
-		fmt.Println("(Simulation: docker compose up -d)")
+		// Use the compose package to simulate starting the service
+		compose.Up(service, configsDir+"/"+service+".yaml")
 	},
 }
 

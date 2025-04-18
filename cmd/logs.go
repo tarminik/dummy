@@ -6,9 +6,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
+	"dummy/internal/config"
+	"dummy/internal/compose"
 )
 
 // logsCmd represents the logs command
@@ -21,23 +21,18 @@ Example usage:
   dummy logs payment-service
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		// Проверяем, что передан сервис
 		if len(args) < 1 {
 			fmt.Println("Error: please specify a service name. Example: dummy logs payment-service")
 			return
 		}
 		service := args[0]
-		configPath := "configs/" + service + ".yaml"
-		// Проверяем, что конфиг существует
-		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			fmt.Printf("Config %s not found.\n", configPath)
+		configsDir := "configs"
+		if !config.ConfigExists(configsDir, service) {
+			fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 			return
 		}
-		// Эмулируем вывод логов
-		fmt.Printf("Logs for service '%s':\n", service)
-		fmt.Println("[INFO] Service started successfully.")
-		fmt.Println("[INFO] Handling request on /api/v1/ping")
-		fmt.Println("[ERROR] Database connection timeout (simulation)")
+		// Use the compose package to simulate logs output
+		compose.Logs(service)
 	},
 }
 

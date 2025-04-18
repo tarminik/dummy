@@ -6,9 +6,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
+	"dummy/internal/config"
+	"dummy/internal/compose"
 )
 
 // runTestsCmd represents the runTests command
@@ -21,25 +21,22 @@ Example usage:
   dummy run-tests --service=payment-service --command="pytest tests/"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		// Получаем значения флагов
+		// Get flag values
 		service, _ := cmd.Flags().GetString("service")
 		command, _ := cmd.Flags().GetString("command")
 
-		// Проверяем, что оба флага заданы
+		// Check that both flags are set
 		if service == "" || command == "" {
 			fmt.Println("Error: please specify both flags: --service and --command. Example: dummy run-tests --service=payment-service --command=\"pytest tests/\"")
 			return
 		}
-		configPath := "configs/" + service + ".yaml"
-		// Проверяем, что конфиг существует
-		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			fmt.Printf("Config %s not found.\n", configPath)
+		configsDir := "configs"
+		if !config.ConfigExists(configsDir, service) {
+			fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 			return
 		}
-		// Эмулируем запуск тестов
-		fmt.Printf("Running tests for service '%s' with command: %s\n", service, command)
-		fmt.Println("(Simulation: running command in environment)")
-		fmt.Println("Tests finished: PASSED (simulation)")
+		// Use the compose package to simulate running tests
+		compose.RunTests(service, command)
 	},
 }
 

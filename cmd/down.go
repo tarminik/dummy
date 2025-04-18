@@ -6,9 +6,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
+	"dummy/internal/config"
+	"dummy/internal/compose"
 )
 
 // downCmd represents the down command
@@ -26,14 +26,13 @@ Example usage:
 			return
 		}
 		service := args[0]
-		configPath := "configs/" + service + ".yaml"
-		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			fmt.Printf("Config %s not found.\n", configPath)
+		configsDir := "configs"
+		if !config.ConfigExists(configsDir, service) {
+			fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 			return
 		}
-		fmt.Printf("Stopping environment for service '%s' (config: %s)...\n", service, configPath)
-		// Here will be the real docker compose down
-		fmt.Println("(Simulation: docker compose down)")
+		// Use the compose package to simulate stopping the service
+		compose.Down(service, configsDir+"/"+service+".yaml")
 	},
 }
 

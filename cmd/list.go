@@ -6,10 +6,8 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"strings"
-
 	"github.com/spf13/cobra"
+	"dummy/internal/config"
 )
 
 // listCmd represents the list command
@@ -22,19 +20,16 @@ Example usage:
   dummy list
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		// Получаем список файлов из папки configs
 		configsDir := "configs"
-		files, err := os.ReadDir(configsDir)
+		// Use the config package to get the list of configs
+		configs, err := config.ListConfigs(configsDir)
 		if err != nil {
 			fmt.Printf("Error reading directory %s: %v\n", configsDir, err)
 			return
 		}
 		fmt.Println("Available configurations:")
-		for _, file := range files {
-			if !file.IsDir() && strings.HasSuffix(file.Name(), ".yaml") {
-				name := strings.TrimSuffix(file.Name(), ".yaml")
-				fmt.Println("-", name)
-			}
+		for _, name := range configs {
+			fmt.Println("-", name)
 		}
 	},
 }

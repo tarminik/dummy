@@ -6,10 +6,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"strings"
-
 	"github.com/spf13/cobra"
+	"dummy/internal/config"
+	"dummy/internal/compose"
 )
 
 // statusCmd represents the status command
@@ -26,25 +25,23 @@ Examples:
 		configsDir := "configs"
 		if len(args) >= 1 {
 			service := args[0]
-			configPath := configsDir + "/" + service + ".yaml"
-			if _, err := os.Stat(configPath); os.IsNotExist(err) {
-				fmt.Printf("Config %s not found.\n", configPath)
+			if !config.ConfigExists(configsDir, service) {
+				fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 				return
 			}
-			fmt.Printf("Service %s: Running (simulation)\n", service)
+			compose.Status(service)
 			return
 		}
-		files, err := os.ReadDir(configsDir)
+		// List all configs and print their simulated status
+		configs, err := config.ListConfigs(configsDir)
 		if err != nil {
 			fmt.Printf("Error reading directory %s: %v\n", configsDir, err)
 			return
 		}
 		fmt.Println("Status of all services:")
-		for _, file := range files {
-			if !file.IsDir() && strings.HasSuffix(file.Name(), ".yaml") {
-				name := strings.TrimSuffix(file.Name(), ".yaml")
-				fmt.Printf("- %s: Running (simulation)\n", name)
-			}
+		for _, name := range configs {
+			fmt.Printf("- %s: ", name)
+			compose.Status(name)
 		}
 	},
 }
