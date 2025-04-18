@@ -3,6 +3,7 @@ package compose
 import (
 	"bytes"
 	"os"
+	"os/exec"
 	"strings"
 	"testing"
 )
@@ -18,6 +19,67 @@ func captureOutput(f func()) string {
 	buf.ReadFrom(r)
 	os.Stdout = old
 	return buf.String()
+}
+
+// --- EDGE-CASE TESTS FOR REAL DOCKER INTEGRATION ---
+func TestUpReal_Errors(t *testing.T) {
+	if !isDockerAvailable() {
+		t.Skip("docker not available, skipping real integration tests")
+	}
+	err := UpReal("/tmp/notfound-compose.yaml")
+	if err == nil {
+		t.Error("UpReal: expected error for missing compose file, got nil")
+	}
+}
+
+func TestDownReal_Errors(t *testing.T) {
+	if !isDockerAvailable() {
+		t.Skip("docker not available, skipping real integration tests")
+	}
+	err := DownReal("/tmp/notfound-compose.yaml")
+	if err == nil {
+		t.Error("DownReal: expected error for missing compose file, got nil")
+	}
+}
+
+func TestLogsReal_Errors(t *testing.T) {
+	if !isDockerAvailable() {
+		t.Skip("docker not available, skipping real integration tests")
+	}
+	err := LogsReal("/tmp/notfound-compose.yaml", "nosvc")
+	if err == nil {
+		t.Error("LogsReal: expected error for missing compose file, got nil")
+	}
+}
+
+func TestStatusReal_Errors(t *testing.T) {
+	if !isDockerAvailable() {
+		t.Skip("docker not available, skipping real integration tests")
+	}
+	err := StatusReal("/tmp/notfound-compose.yaml")
+	if err == nil {
+		t.Error("StatusReal: expected error for missing compose file, got nil")
+	}
+}
+
+func TestRunTestsReal_Errors(t *testing.T) {
+	if !isDockerAvailable() {
+		t.Skip("docker not available, skipping real integration tests")
+	}
+	err := RunTestsReal("/tmp/notfound-compose.yaml", "web", "echo hi")
+	if err == nil {
+		t.Error("RunTestsReal: expected error for missing compose file, got nil")
+	}
+	// Некорректная команда (при наличии docker-compose.yaml и поднятого контейнера) можно добавить отдельно
+}
+
+// isDockerAvailable returns true if docker is available in PATH and daemon is running.
+func isDockerAvailable() bool {
+	cmd := exec.Command("docker", "info")
+	if err := cmd.Run(); err != nil {
+		return false
+	}
+	return true
 }
 
 func TestUp(t *testing.T) {
