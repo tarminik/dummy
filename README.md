@@ -15,11 +15,13 @@ go get github.com/tarminik/dummy
 
 или скачать бинарный файл с официального сайта.
 
-### Требования
+### Требования к окружению
 
 - Go 1.16+
 - Docker 20.10+
 - Docker Compose 2.0+
+- Пользователь должен иметь права на запуск docker (обычно быть в группе docker)
+- Рекомендуется Linux или WSL2
 
 ---
 
@@ -28,63 +30,87 @@ go get github.com/tarminik/dummy
 Проект состоит из следующих основных компонентов:
 
 - `cmd`: содержит CLI-команды
-- `config`: содержит конфигурации окружений
-- `docker`: содержит Docker-compose файлы
+- `configs`: содержит конфигурации окружений (yaml-файлы для каждого сервиса)
 - `internal`: содержит внутреннюю логику проекта
 - `tests`: содержит тесты
 
----
+### Пример структуры configs/
 
-## CLI-команды
+```
+configs/
+  web.yaml
+  payment-service.yaml
+  ...
+```
 
-dummy предоставляет следующие CLI-команды:
-
-### Для разработчика:
-
-- `dummy login`: авторизация (если требуется)
-- `dummy list`: получение списка доступных конфигураций
-- `dummy get config`: получение актуальной конфигурации
-- `dummy up`: запуск окружения
-- `dummy down`: остановка окружения
-- `dummy status`: проверка статуса
-- `dummy logs`: просмотр логов
-- `dummy run-tests`: запуск тестов в окружении
-
-### Для DevOps/админа:
-
-- `dummy create config`: создание новой конфигурации
-- `dummy edit config`: редактирование конфигурации
-- `dummy publish config`: публикация конфигурации для разработчиков
-- `dummy test config`: тестирование конфигурации (локально)
-- `dummy update config`: массовое обновление версий сервисов в конфигах
+### Пример yaml для сервиса (configs/web.yaml):
+```yaml
+version: '3.8'
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+```
 
 ---
 
-## Пример использования
+## CLI-команды (все используют реальные docker compose вызовы)
+
+- `dummy up <service>` — запуск окружения для сервиса (docker compose up -d)
+- `dummy down <service>` — остановка окружения (docker compose down)
+- `dummy status <service>` — статус контейнеров (docker compose ps)
+- `dummy logs <service>` — просмотр логов (docker compose logs)
+- `dummy run-tests --service=<service> --command="<cmd>"` — выполнить команду внутри контейнера (docker compose exec)
+- `dummy list` — список доступных конфигов
+- `dummy get config <service>` — получить yaml-конфиг сервиса
+
+> Для работы команд требуется наличие yaml-файла в configs/ с именем <service>.yaml
+
+---
+
+## Примеры использования
 
 ```bash
-$ dummy login
-$ dummy list
-$ dummy get config payment-service
-$ dummy up payment-service
-$ dummy status
-$ dummy run-tests --service=payment-service --command="pytest tests/"
-$ dummy down payment-service
+# Запуск окружения
+$ dummy up web
+
+# Проверка статуса
+$ dummy status web
+
+# Просмотр логов
+$ dummy logs web
+
+# Выполнение команды внутри контейнера
+$ dummy run-tests --service=web --command="ls /usr/share/nginx/html"
+
+# Остановка окружения
+$ dummy down web
 ```
 
 ---
 
 ## Тестирование
 
-dummy предоставляет набор тестов для проверки корректности работы CLI-команд и внутренней логики.
-
-### Запуск тестов
-
 Тесты можно запустить с помощью команды:
-
 ```bash
 go test ./...
 ```
+
+---
+
+## Troubleshooting (типовые ошибки)
+
+- **Нет docker или docker compose:**
+  - Проверьте, что docker и docker compose установлены и доступны в PATH.
+- **Нет прав на запуск docker:**
+  - Добавьте пользователя в группу docker: `sudo usermod -aG docker $USER`
+- **Нет yaml-файла для сервиса:**
+  - Создайте файл configs/<service>.yaml по примеру выше.
+- **Порт уже занят:**
+  - Измените порт в yaml или остановите другой сервис, использующий этот порт.
+- **Не запускается контейнер:**
+  - Проверьте логи через `dummy logs <service>`
 
 ---
 
@@ -118,6 +144,7 @@ dummy — это открытый проект, и мы приветствуем
 - Динамическое обновление окружения без перезапуска
 - Аудит действий пользователей
 - Веб-интерфейс для управления конфигами
+
 
 ---
 
