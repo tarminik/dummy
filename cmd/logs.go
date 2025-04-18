@@ -32,8 +32,11 @@ Example usage:
 			fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 			return
 		}
-		// Use the compose package to simulate logs output
-		compose.Logs(service)
+		// Реальный вывод логов через Docker Compose
+		configPath := configsDir + "/" + service + ".yaml"
+		if err := compose.LogsReal(configPath, service); err != nil {
+			fmt.Println("[ERROR] docker compose logs failed:", err)
+		}
 	},
 }
 

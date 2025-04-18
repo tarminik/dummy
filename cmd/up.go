@@ -32,8 +32,13 @@ Example usage:
 			fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 			return
 		}
-		// Use the compose package to simulate starting the service
-		compose.Up(service, configsDir+"/"+service+".yaml")
+		// Реальный запуск через Docker Compose
+		configPath := configsDir + "/" + service + ".yaml"
+		if err := compose.UpReal(configPath); err != nil {
+			fmt.Println("[ERROR] docker compose up failed:", err)
+		} else {
+			fmt.Println("[OK] Environment started for service:", service)
+		}
 	},
 }
 

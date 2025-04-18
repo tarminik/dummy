@@ -32,8 +32,13 @@ Example usage:
 			fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 			return
 		}
-		// Use the compose package to simulate stopping the service
-		compose.Down(service, configsDir+"/"+service+".yaml")
+		// Реальная остановка через Docker Compose
+		configPath := configsDir + "/" + service + ".yaml"
+		if err := compose.DownReal(configPath); err != nil {
+			fmt.Println("[ERROR] docker compose down failed:", err)
+		} else {
+			fmt.Println("[OK] Environment stopped for service:", service)
+		}
 	},
 }
 

@@ -36,8 +36,13 @@ Example usage:
 			fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 			return
 		}
-		// Use the compose package to simulate running tests
-		compose.RunTests(service, command)
+		// Реальный запуск тестов через Docker Compose exec
+		configPath := configsDir + "/" + service + ".yaml"
+		if err := compose.RunTestsReal(configPath, service, command); err != nil {
+			fmt.Println("[ERROR] docker compose exec failed:", err)
+		} else {
+			fmt.Println("[OK] Tests executed for service:", service)
+		}
 	},
 }
 

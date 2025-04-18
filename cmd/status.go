@@ -30,7 +30,11 @@ Examples:
 				fmt.Printf("Config %s/%s.yaml not found.\n", configsDir, service)
 				return
 			}
-			compose.Status(service)
+			// Реальный вывод статуса через Docker Compose
+			configPath := configsDir + "/" + service + ".yaml"
+			if err := compose.StatusReal(configPath); err != nil {
+				fmt.Println("[ERROR] docker compose ps failed:", err)
+			}
 			return
 		}
 		// List all configs and print their simulated status
