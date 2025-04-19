@@ -1,10 +1,10 @@
-version: 1.0
+version: "1.0"
 services:
   postgres:
     image: postgres:14.5
-    env:
+    environment:
       POSTGRES_PASSWORD: password
   payment-service:
-    image: registry.company.com/payment-service:latest
+    image: nginx:alpine
     ports:
-      - "8080:8080"
+      - "8080:80"
